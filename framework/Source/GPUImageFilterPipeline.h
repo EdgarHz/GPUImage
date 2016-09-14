@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "GPUImageOutput.h"
 
+//by hzy. 将一组filter串联在一起
 @interface GPUImageFilterPipeline : NSObject
 {
     NSString *stringValue;

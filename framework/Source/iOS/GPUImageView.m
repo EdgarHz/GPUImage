@@ -373,6 +373,7 @@
 {
     runSynchronouslyOnVideoProcessingQueue(^{
         [GPUImageContext setActiveShaderProgram:displayProgram];
+        //by hzy, GPUImage  9.7
         [self setDisplayFramebuffer];
         
         glClearColor(backgroundColorRed, backgroundColorGreen, backgroundColorBlue, backgroundColorAlpha);

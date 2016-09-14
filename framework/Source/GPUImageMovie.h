@@ -3,6 +3,7 @@
 #import "GPUImageContext.h"
 #import "GPUImageOutput.h"
 
+//by hzy. 系统视频数据源
 /** Protocol for getting Movie played callback.
  */
 @protocol GPUImageMovieDelegate <NSObject>

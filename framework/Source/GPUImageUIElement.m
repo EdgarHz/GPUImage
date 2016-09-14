@@ -92,7 +92,7 @@
 	CGContextTranslateCTM(imageContext, 0.0f, layerPixelSize.height);
     CGContextScaleCTM(imageContext, layer.contentsScale, -layer.contentsScale);
     //        CGContextSetBlendMode(imageContext, kCGBlendModeCopy); // From Technical Q&A QA1708: http://developer.apple.com/library/ios/#qa/qa1708/_index.html
-    
+    //by hzy, GPUImage 9.0 generate image from UIView or layer by image Context, then draw it to normal context as texture
     [layer renderInContext:imageContext];
     
     CGContextRelease(imageContext);

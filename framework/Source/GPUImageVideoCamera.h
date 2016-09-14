@@ -4,7 +4,7 @@
 #import "GPUImageContext.h"
 #import "GPUImageOutput.h"
 #import "GPUImageColorConversion.h"
-
+//by hzy. 摄像头视频源， 可以加音频
 //Optionally override the YUV to RGB matrices
 void setColorConversion601( GLfloat conversionMatrix[9] );
 void setColorConversion601FullRange( GLfloat conversionMatrix[9] );

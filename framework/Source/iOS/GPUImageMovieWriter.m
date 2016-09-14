@@ -564,15 +564,16 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
 
 - (void)createDataFBO;
 {
+    //by hzy, puzzled ???
     glActiveTexture(GL_TEXTURE1);
     glGenFramebuffers(1, &movieFramebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, movieFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, movieFramebuffer);//by hzy, GPUImage 5.4.0
     
     if ([GPUImageContext supportsFastTextureUpload])
     {
         // Code originally sourced from http://allmybrain.com/2011/12/08/rendering-to-a-texture-with-ios-5-texture-cache-api/
         
-
+        //by hzy, GPUImage 5.4.1 bind current context's pixelBuffer pool and CVPixelBufferRef
         CVPixelBufferPoolCreatePixelBuffer (NULL, [assetWriterPixelBufferInput pixelBufferPool], &renderTarget);
 
         /* AVAssetWriter will use BT.601 conversion matrix for RGB to YCbCr conversion
@@ -583,7 +584,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         CVBufferSetAttachment(renderTarget, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
         CVBufferSetAttachment(renderTarget, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_601_4, kCVAttachmentMode_ShouldPropagate);
         CVBufferSetAttachment(renderTarget, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
-        
+        //by hzy, GPUImage 5.4.2 bind GL_TEXTURE_2D output is renderTexture?
         CVOpenGLESTextureCacheCreateTextureFromImage (kCFAllocatorDefault, [_movieWriterContext coreVideoTextureCache], renderTarget,
                                                       NULL, // texture attributes
                                                       GL_TEXTURE_2D,
@@ -680,6 +681,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
     const GLfloat *textureCoordinates = [GPUImageFilter textureCoordinatesForRotation:inputRotation];
     
 	glActiveTexture(GL_TEXTURE4);
+    //by hzy, GPUImage 5.4.4 bind input frame buffer texture to current context
 	glBindTexture(GL_TEXTURE_2D, [inputFramebufferToUse texture]);
 	glUniform1i(colorSwizzlingInputTextureUniform, 4);
     
@@ -694,7 +696,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
 
 #pragma mark -
 #pragma mark GPUImageInput protocol
-
+//by hzy, GPUImage 5.1.  deal input buffer
 - (void)newFrameReadyAtTime:(CMTime)frameTime atIndex:(NSInteger)textureIndex;
 {
     if (!isRecording || _paused)
@@ -746,7 +748,8 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
             startTime = frameTime;
         });
     }
-
+    
+    //by hzy, GPUImage 5.2 write input buffe to file.
     GPUImageFramebuffer *inputFramebufferForBlock = firstInputFramebuffer;
     glFinish();
 
@@ -760,12 +763,14 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         
         // Render the frame with swizzled colors, so that they can be uploaded quickly as BGRA frames
         [_movieWriterContext useAsCurrentContext];
+        //by hzy, GPUImage 5.3 draw inputFrameBuffer's texture to context
         [self renderAtInternalSizeUsingFramebuffer:inputFramebufferForBlock];
         
         CVPixelBufferRef pixel_buffer = NULL;
         
         if ([GPUImageContext supportsFastTextureUpload])
         {
+           //by hzy, GPUImage 5.5
             pixel_buffer = renderTarget;
             CVPixelBufferLockBaseAddress(pixel_buffer, 0);
         }
@@ -798,6 +803,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
             }
             else if(self.assetWriter.status == AVAssetWriterStatusWriting)
             {
+                //by hzy, GPUImage 5.6 write pixel to buffer
                 if (![assetWriterPixelBufferInput appendPixelBuffer:pixel_buffer withPresentationTime:frameTime])
                     NSLog(@"Problem appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, frameTime)));
             }
@@ -826,7 +832,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
 {
     return 0;
 }
-
+//by hzy, GPUImage 5.0  retain  outputFrameBuffer as inputFrameBuffer
 - (void)setInputFramebuffer:(GPUImageFramebuffer *)newInputFramebuffer atIndex:(NSInteger)textureIndex;
 {
     [newInputFramebuffer lock];

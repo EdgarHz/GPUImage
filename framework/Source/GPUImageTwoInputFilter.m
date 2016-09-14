@@ -83,7 +83,7 @@ NSString *const kGPUImageTwoInputTextureVertexShaderString = SHADER_STRING
 
 #pragma mark -
 #pragma mark Rendering
-
+//by hzy, GPUImage 6.4 subclass
 - (void)renderToTextureWithVertices:(const GLfloat *)vertices textureCoordinates:(const GLfloat *)textureCoordinates;
 {
     if (self.preventRendering)
@@ -95,7 +95,7 @@ NSString *const kGPUImageTwoInputTextureVertexShaderString = SHADER_STRING
     
     [GPUImageContext setActiveShaderProgram:filterProgram];
     outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:[self sizeOfFBO] textureOptions:self.outputTextureOptions onlyTexture:NO];
-    [outputFramebuffer activateFramebuffer];
+    [outputFramebuffer activateFramebuffer];//by hzy, GPUImage 6.5
     if (usingNextFrameForImageCapture)
     {
         [outputFramebuffer lock];
@@ -142,7 +142,7 @@ NSString *const kGPUImageTwoInputTextureVertexShaderString = SHADER_STRING
         return 0;
     }
 }
-
+//by hzy, GPUImage 6.1
 - (void)setInputFramebuffer:(GPUImageFramebuffer *)newInputFramebuffer atIndex:(NSInteger)textureIndex;
 {
     if (textureIndex == 0)
@@ -205,7 +205,7 @@ NSString *const kGPUImageTwoInputTextureVertexShaderString = SHADER_STRING
     
     return rotatedSize; 
 }
-
+//by hzy, GPUImage 6.2
 - (void)newFrameReadyAtTime:(CMTime)frameTime atIndex:(NSInteger)textureIndex;
 {
     // You can set up infinite update loops, so this helps to short circuit them
@@ -255,6 +255,7 @@ NSString *const kGPUImageTwoInputTextureVertexShaderString = SHADER_STRING
     if ((hasReceivedFirstFrame && hasReceivedSecondFrame) || updatedMovieFrameOppositeStillImage)
     {
         CMTime passOnFrameTime = (!CMTIME_IS_INDEFINITE(firstFrameTime)) ? firstFrameTime : secondFrameTime;
+        //by hzy, GPUImage 6.3
         [super newFrameReadyAtTime:passOnFrameTime atIndex:0]; // Bugfix when trying to record: always use time from first input (unless indefinite, in which case use the second input)
         hasReceivedFirstFrame = NO;
         hasReceivedSecondFrame = NO;

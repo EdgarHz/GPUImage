@@ -76,7 +76,7 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
 #pragma clang diagnostic pop
     
     [self.captureSession beginConfiguration];
-    
+    //by hzy, GPUImage 2.0 bind still image output to camera
     photoOutput = [[AVCaptureStillImageOutput alloc] init];
    
     // Having a still photo input set to BGRA and video to YUV doesn't work well, so since I don't have YUV resizing for iPhone 4 yet, kick back to BGRA for that device
@@ -270,7 +270,7 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
 }
 
 #pragma mark - Private Methods
-
+//by hzy, GPUImage 2.1 still image capture
 - (void)capturePhotoProcessedUpToFilter:(GPUImageOutput<GPUImageInput> *)finalFilterInChain withImageOnGPUHandler:(void (^)(NSError *error))block
 {
     dispatch_semaphore_wait(frameRenderingSemaphore, DISPATCH_TIME_FOREVER);
@@ -306,6 +306,7 @@ void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize fina
 
             dispatch_semaphore_signal(frameRenderingSemaphore);
             [finalFilterInChain useNextFrameForImageCapture];
+            //by hzy, GPUImage 2.2 send it to next target as 1.3
             [self captureOutput:photoOutput didOutputSampleBuffer:sampleBuffer fromConnection:[[photoOutput connections] objectAtIndex:0]];
             dispatch_semaphore_wait(frameRenderingSemaphore, DISPATCH_TIME_FOREVER);
             if (sampleBuffer != NULL)

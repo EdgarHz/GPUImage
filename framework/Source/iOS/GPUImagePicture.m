@@ -73,6 +73,7 @@
     return [self initWithCGImage:[newImageSource CGImage] smoothlyScaleOutput:smoothlyScaleOutput removePremultiplication:removePremultiplication];
 }
 
+//by hzy, GPUImage 4.1
 - (id)initWithCGImage:(CGImageRef)newImageSource smoothlyScaleOutput:(BOOL)smoothlyScaleOutput removePremultiplication:(BOOL)removePremultiplication;
 {
     if (!(self = [super init]))
@@ -175,7 +176,7 @@
         imageData = (GLubyte *) calloc(1, (int)pixelSizeToUseForTexture.width * (int)pixelSizeToUseForTexture.height * 4);
         
         CGColorSpaceRef genericRGBColorspace = CGColorSpaceCreateDeviceRGB();
-        
+        //by hzy, GPUImage 4.2
         CGContextRef imageContext = CGBitmapContextCreate(imageData, (size_t)pixelSizeToUseForTexture.width, (size_t)pixelSizeToUseForTexture.height, 8, (size_t)pixelSizeToUseForTexture.width * 4, genericRGBColorspace,  kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
         //        CGContextSetBlendMode(imageContext, kCGBlendModeCopy); // From Technical Q&A QA1708: http://developer.apple.com/library/ios/#qa/qa1708/_index.html
         CGContextDrawImage(imageContext, CGRectMake(0.0, 0.0, pixelSizeToUseForTexture.width, pixelSizeToUseForTexture.height), newImageSource);
@@ -248,7 +249,7 @@
     
     runSynchronouslyOnVideoProcessingQueue(^{
         [GPUImageContext useImageProcessingContext];
-        
+        //by hzy, GPUImage 4.7
         outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:pixelSizeToUseForTexture onlyTexture:YES];
         [outputFramebuffer disableReferenceCounting];
 
@@ -304,7 +305,7 @@
     [super removeAllTargets];
     hasProcessedImage = NO;
 }
-
+//by hzy, GPUImage 4.8
 - (void)processImage;
 {
     [self processImageWithCompletionHandler:nil];
@@ -329,6 +330,7 @@
             
             [currentTarget setCurrentlyReceivingMonochromeInput:NO];
             [currentTarget setInputSize:pixelSizeOfImage atIndex:textureIndexOfTarget];
+            //by hzy, GPUImage 4.9
             [currentTarget setInputFramebuffer:outputFramebuffer atIndex:textureIndexOfTarget];
             [currentTarget newFrameReadyAtTime:kCMTimeIndefinite atIndex:textureIndexOfTarget];
         }

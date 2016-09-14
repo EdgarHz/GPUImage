@@ -1,5 +1,5 @@
 #import "GPUImageVideoCamera.h"
-
+//by hzy. 摄像头图片源
 void stillImageDataReleaseCallback(void *releaseRefCon, const void *baseAddress);
 void GPUImageCreateResizedSampleBuffer(CVPixelBufferRef cameraFrame, CGSize finalSize, CMSampleBufferRef *sampleBuffer);
 

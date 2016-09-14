@@ -211,6 +211,7 @@ static void *openGLESContextQueueKey;
 
 - (void)presentBufferForDisplay;
 {
+    //by hzy, GPUImage  9.9
     [self.context presentRenderbuffer:GL_RENDERBUFFER];
 }
 

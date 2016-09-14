@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 #import "GPUImageOutput.h"
-
+//by hzy. 图片源
 
 @interface GPUImagePicture : GPUImageOutput
 {

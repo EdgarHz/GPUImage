@@ -61,6 +61,7 @@ void reportAvailableMemoryForGPUImage(NSString *tag);
 @property(readwrite, nonatomic) GPUTextureOptions outputTextureOptions;
 
 /// @name Managing targets
+// by hzy. put outputFramebuffer to target
 - (void)setInputFramebufferForTarget:(id<GPUImageInput>)target atIndex:(NSInteger)inputTextureIndex;
 - (GPUImageFramebuffer *)framebufferForOutput;
 - (void)removeOutputFramebuffer;

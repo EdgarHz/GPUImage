@@ -551,6 +551,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
 
 #define INITIALFRAMESTOIGNOREFORBENCHMARK 5
 
+//by hzy, GPUImage 1.4. send outputFrameBuffer to next target.
 - (void)updateTargetsForVideoCameraUsingCacheTextureAtWidth:(int)bufferWidth height:(int)bufferHeight time:(CMTime)currentTime;
 {
     // First, update all the framebuffers in the targets
@@ -564,8 +565,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
             if (currentTarget != self.targetToIgnoreForUpdates)
             {
                 [currentTarget setInputRotation:outputRotation atIndex:textureIndexOfTarget];
-                [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:textureIndexOfTarget];
-                
+                [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:textureIndexOfTarget];//by hzy, GPUImage 1.6.
                 if ([currentTarget wantsMonochromeInput] && captureAsYUV)
                 {
                     [currentTarget setCurrentlyReceivingMonochromeInput:YES];
@@ -600,12 +600,13 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
             
             if (currentTarget != self.targetToIgnoreForUpdates)
             {
+                //by hzy, GPUImage 1.7.  notify target to deal it
                 [currentTarget newFrameReadyAtTime:currentTime atIndex:textureIndexOfTarget];
             }
         }
     }
 }
-
+//by hzy, GPUImage 1.2
 - (void)processVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer;
 {
     if (capturePaused)
@@ -614,7 +615,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
     }
     
     CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
-    CVImageBufferRef cameraFrame = CMSampleBufferGetImageBuffer(sampleBuffer);
+    CVImageBufferRef cameraFrame = CMSampleBufferGetImageBuffer(sampleBuffer);//by hzy, GPUImage. get image from sample buffer
     int bufferWidth = (int) CVPixelBufferGetWidth(cameraFrame);
     int bufferHeight = (int) CVPixelBufferGetHeight(cameraFrame);
     CFTypeRef colorAttachments = CVBufferGetAttachment(cameraFrame, kCVImageBufferYCbCrMatrixKey, NULL);
@@ -649,7 +650,8 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
     }
 
 	CMTime currentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-
+    
+    //by hzy, GPUImage. enable EAGLContext
     [GPUImageContext useImageProcessingContext];
 
     if ([GPUImageContext supportsFastTextureUpload] && captureAsYUV)
@@ -667,7 +669,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
                 imageBufferWidth = bufferWidth;
                 imageBufferHeight = bufferHeight;
             }
-            
+            //by hzy, GPUImage. create luminance and chrominance texture from image. the texture managed by cache
             CVReturn err;
             // Y-plane
             glActiveTexture(GL_TEXTURE4);
@@ -713,6 +715,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
             
 //            if (!allTargetsWantMonochromeData)
 //            {
+                //by hzy, GPUImage 1.3. draw texture to outputFrameBuffer
                 [self convertYUVToRGBOutput];
 //            }
 
@@ -787,6 +790,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
         
         // Using BGRA extension to pull in video frame data directly
         // The use of bytesPerRow / 4 accounts for a display glitch present in preview video frames when using the photo preset on the camera
+        //by hzy, GPUImage 1.3 将图片内容输出到[outputFramebuffer texture]中。
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bytesPerRow / 4, bufferHeight, 0, GL_BGRA, GL_UNSIGNED_BYTE, CVPixelBufferGetBaseAddress(cameraFrame));
         
         [self updateTargetsForVideoCameraUsingCacheTextureAtWidth:bytesPerRow / 4 height:bufferHeight time:currentTime];
@@ -810,6 +814,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
     [self.audioEncodingTarget processAudioBuffer:sampleBuffer]; 
 }
 
+//by hzy, GPUImage 1.3. generate GPUImageFrameBuffer from textures.
 - (void)convertYUVToRGBOutput;
 {
     [GPUImageContext setActiveShaderProgram:yuvConversionProgram];
@@ -821,7 +826,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
         rotatedImageBufferWidth = imageBufferHeight;
         rotatedImageBufferHeight = imageBufferWidth;
     }
-
+    //by hzy, GPUImage. fetch cached GPUImageFramebuffer objects with same texture options. and set frameBuffer to render
     outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:CGSizeMake(rotatedImageBufferWidth, rotatedImageBufferHeight) textureOptions:self.outputTextureOptions onlyTexture:NO];
     [outputFramebuffer activateFramebuffer];
 
@@ -847,7 +852,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
 
     glVertexAttribPointer(yuvConversionPositionAttribute, 2, GL_FLOAT, 0, 0, squareVertices);
 	glVertexAttribPointer(yuvConversionTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, [GPUImageFilter textureCoordinatesForRotation:internalRotation]);
-    
+    //by hzy, GPUImage. draw textures to outputFrameBuffer's frame buffer.
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
@@ -867,7 +872,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
 
 #pragma mark -
 #pragma mark AVCaptureVideoDataOutputSampleBufferDelegate
-
+//by hzy, GPUImage 1.0
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection
 {
     if (!self.captureSession.isRunning)
@@ -880,6 +885,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
     }
     else
     {
+        //TODO, by hzy:   measure time used.
         if (dispatch_semaphore_wait(frameRenderingSemaphore, DISPATCH_TIME_NOW) != 0)
         {
             return;
@@ -892,7 +898,7 @@ void setColorConversion709( GLfloat conversionMatrix[9] )
             {
                 [self.delegate willOutputSampleBuffer:sampleBuffer];
             }
-            
+            //by hzy, GPUImage 1.2
             [self processVideoSampleBuffer:sampleBuffer];
             
             CFRelease(sampleBuffer);

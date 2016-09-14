@@ -44,7 +44,7 @@ void runSynchronouslyOnVideoProcessingQueue(void (^block)(void))
 		dispatch_sync(videoProcessingQueue, block);
 	}
 }
-
+//by hzy. if now is videoProcessingQueue, do it synchronously
 void runAsynchronouslyOnVideoProcessingQueue(void (^block)(void))
 {
     dispatch_queue_t videoProcessingQueue = [GPUImageContext sharedContextQueue];
@@ -104,6 +104,7 @@ void runAsynchronouslyOnContextQueue(GPUImageContext *context, void (^block)(voi
         }
 }
 
+//by hzy. memory available judgement
 void reportAvailableMemoryForGPUImage(NSString *tag) 
 {    
     if (!tag)
@@ -172,7 +173,7 @@ void reportAvailableMemoryForGPUImage(NSString *tag)
 
 #pragma mark -
 #pragma mark Managing targets
-
+//by hzy. outputFramebuffer是传递给下一处理器的数据对象
 - (void)setInputFramebufferForTarget:(id<GPUImageInput>)target atIndex:(NSInteger)inputTextureIndex;
 {
     [target setInputFramebuffer:[self framebufferForOutput] atIndex:inputTextureIndex];

@@ -31,7 +31,7 @@
 
     return self;
 }
-
+//by hzy, GPUImage 3.2.1
 - (AVAssetReader*)createAssetReader
  {
     //NSLog(@"creating reader from composition: %@, video: %@, audio: %@ with duration: %@", _compositon, _videoComposition, _audioMix, CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, _compositon.duration)));

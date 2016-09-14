@@ -158,6 +158,7 @@
     movieWriter.encodingLiveVideo = NO;
 }
 
+//by hzy, GPUImage 3.1
 - (void)startProcessing
 {
     if( self.playerItem ) {
@@ -166,6 +167,7 @@
     }
     if(self.url == nil)
     {
+        //by hzy, GPUImage 3.2
       [self processAsset];
       return;
     }
@@ -189,6 +191,7 @@
                 return;
             }
             blockSelf.asset = inputAsset;
+            //by hzy, GPUImage 3.2
             [blockSelf processAsset];
             blockSelf = nil;
         });
@@ -236,9 +239,10 @@
 
     return assetReader;
 }
-
+//by hzy, GPUImage 3.2
 - (void)processAsset
 {
+    //by hzy, GPUImage 3.2.1
     reader = [self createAssetReader];
 
     AVAssetReaderOutput *readerVideoTrackOutput = nil;
@@ -265,6 +269,7 @@
 
     if (synchronizedMovieWriter != nil)
     {
+        //by hzy, GPUImage 3.3
         [synchronizedMovieWriter setVideoInputReadyCallback:^{
             BOOL success = [weakSelf readNextVideoFrameFromOutput:readerVideoTrackOutput];
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
@@ -411,11 +416,12 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             });
     }
 }
-
+//by hzy, GPUImage 3.3
 - (BOOL)readNextVideoFrameFromOutput:(AVAssetReaderOutput *)readerVideoTrackOutput;
 {
     if (reader.status == AVAssetReaderStatusReading && ! videoEncodingIsFinished)
     {
+        //by hzy, GPUImage 3.3
         CMSampleBufferRef sampleBufferRef = [readerVideoTrackOutput copyNextSampleBuffer];
         if (sampleBufferRef) 
         {
@@ -441,6 +447,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
             __unsafe_unretained GPUImageMovie *weakSelf = self;
             runSynchronouslyOnVideoProcessingQueue(^{
+                //by hzy, GPUImage 3.4
                 [weakSelf processMovieFrame:sampleBufferRef];
                 CMSampleBufferInvalidate(sampleBufferRef);
                 CFRelease(sampleBufferRef);
@@ -498,7 +505,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     }
     return NO;
 }
-
+//by hzy, GPUImage 3.4
 - (void)processMovieFrame:(CMSampleBufferRef)movieSampleBuffer; 
 {
 //    CMTimeGetSeconds
@@ -528,7 +535,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
         return 0.f;
     }
 }
-
+//by hzy, GPUImage 3.5
 - (void)processMovieFrame:(CVPixelBufferRef)movieFrame withSampleTime:(CMTime)currentSampleTime
 {
     int bufferHeight = (int) CVPixelBufferGetHeight(movieFrame);
@@ -602,6 +609,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             if ([GPUImageContext deviceSupportsRedTextures])
             {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+                //by hzy, GPUImage 3.6
                 err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE, bufferWidth, bufferHeight, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0, &luminanceTextureRef);
 #else
                 err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &luminanceTextureRef);
@@ -634,6 +642,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             if ([GPUImageContext deviceSupportsRedTextures])
             {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+                //by hzy, GPUImage 3.6
                 err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, GL_TEXTURE_2D, GL_LUMINANCE_ALPHA, bufferWidth/2, bufferHeight/2, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 1, &chrominanceTextureRef);
 #else
                 err = CVOpenGLTextureCacheCreateTextureFromImage(kCFAllocatorDefault, [[GPUImageContext sharedImageProcessingContext] coreVideoTextureCache], movieFrame, NULL, &chrominanceTextureRef);
@@ -663,6 +672,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 
 //            if (!allTargetsWantMonochromeData)
 //            {
+            //by hzy, GPUImage 3.7
                 [self convertYUVToRGBOutput];
 //            }
 
@@ -671,6 +681,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
                 NSInteger indexOfObject = [targets indexOfObject:currentTarget];
                 NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
                 [currentTarget setInputSize:CGSizeMake(bufferWidth, bufferHeight) atIndex:targetTextureIndex];
+                //by hzy, GPUImage 3.8
                 [currentTarget setInputFramebuffer:outputFramebuffer atIndex:targetTextureIndex];
             }
             
@@ -680,6 +691,7 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
             {
                 NSInteger indexOfObject = [targets indexOfObject:currentTarget];
                 NSInteger targetTextureIndex = [[targetTextureIndices objectAtIndex:indexOfObject] integerValue];
+                //by hzy, GPUImage 3.9
                 [currentTarget newFrameReadyAtTime:currentSampleTime atIndex:targetTextureIndex];
             }
 

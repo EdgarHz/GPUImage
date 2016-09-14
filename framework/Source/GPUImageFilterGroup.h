@@ -1,6 +1,8 @@
 #import "GPUImageOutput.h"
 #import "GPUImageFilter.h"
 
+//by hzy. 视initialFilters为流的入口，其为一组对象。 terminalFilter为最终输出对象。
+//by hzy. 感觉单看这部分代码并不是很完整。应该是个虚类，不能直接使用。
 @interface GPUImageFilterGroup : GPUImageOutput <GPUImageInput>
 {
     NSMutableArray *filters;
