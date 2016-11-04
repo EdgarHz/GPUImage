@@ -20,4 +20,7 @@
     GPUImageHSBFilter *hsbFilter;
 }
 
+@property (nonatomic, assign) float whitening; ///<default: 1.1, shouldn't be 0, which will make black screen
+@property (nonatomic, assign) float saturation;//default: 1.1, shouldn't be 0, which will make black screen
+@property (nonatomic, assign) CGFloat smoothIntensity;//default: 0.5
 @end

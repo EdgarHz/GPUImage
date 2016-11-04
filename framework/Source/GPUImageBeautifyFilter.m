@@ -69,6 +69,26 @@ NSString *const kGPUImageBeautifyFragmentShaderString = SHADER_STRING
 @end
 
 @implementation GPUImageBeautifyFilter
+- (void)resetHsbFilter {
+    [hsbFilter reset];
+    [hsbFilter adjustBrightness:_whitening];
+    [hsbFilter adjustSaturation:_saturation];
+}
+- (void)setSaturation:(float)saturation {
+    _saturation = saturation;
+    [self resetHsbFilter];
+}
+- (void)setWhitening:(float)whitening {
+    _whitening = whitening;
+    [self resetHsbFilter];
+}
+
+- (void)setSmoothIntensity:(CGFloat)smoothIntensity {
+    combinationFilter.intensity = smoothIntensity;
+}
+- (CGFloat)smoothIntensity {
+    return combinationFilter.intensity;
+}
 
 - (id)init;
 {
@@ -91,9 +111,11 @@ NSString *const kGPUImageBeautifyFragmentShaderString = SHADER_STRING
     [self addFilter:combinationFilter];
     
     // Adjust HSB
+    _saturation = 1.1;
+    _whitening = 1.1;
     hsbFilter = [[GPUImageHSBFilter alloc] init];
-    [hsbFilter adjustBrightness:1.1];
-    [hsbFilter adjustSaturation:1.1];
+    [hsbFilter adjustBrightness:_whitening];
+    [hsbFilter adjustSaturation:_saturation];
     
     [bilateralFilter addTarget:combinationFilter];
     [cannyEdgeFilter addTarget:combinationFilter];
