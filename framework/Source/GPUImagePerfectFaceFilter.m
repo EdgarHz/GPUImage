@@ -8,7 +8,7 @@
 #import "GPUImagePerfectFaceFilter.h"
 
 @implementation GPUImagePerfectFaceFilter
-
+@synthesize bilateralFilter, GaussianFilter, GaussianCopyFilter1, OverlayAndWhiterFilter, SubtractionFilter;
 - (id)init;
 {
     if (!(self = [super init]))

@@ -17,5 +17,9 @@
     GPUImageGaussianBlurFilter *GaussianFilter;
     GPUImageOverlayAndWhiterFilter *OverlayAndWhiterFilter;
 }
-
+@property (nonatomic, strong)     GPUImageBilateralFilter *bilateralFilter;
+@property (nonatomic, strong)     GPUImageSubtractionFilter *SubtractionFilter;
+@property (nonatomic, strong)     GPUImageGaussianBlurFilter *GaussianCopyFilter1;
+@property (nonatomic, strong)     GPUImageGaussianBlurFilter *GaussianFilter;
+@property (nonatomic, strong)     GPUImageOverlayAndWhiterFilter *OverlayAndWhiterFilter;
 @end

@@ -1138,10 +1138,10 @@
 			children = (
 				442A2F831DCC2FE1004760AB /* GPUImageBeautifyFilter.h */,
 				442A2F841DCC2FE1004760AB /* GPUImageBeautifyFilter.m */,
-				442A2F851DCC2FE1004760AB /* GPUImageOverlayAndWhiterFilter.h */,
-				442A2F861DCC2FE1004760AB /* GPUImageOverlayAndWhiterFilter.m */,
 				442A2F871DCC2FE1004760AB /* GPUImagePerfectFaceFilter.h */,
 				442A2F881DCC2FE1004760AB /* GPUImagePerfectFaceFilter.m */,
+				442A2F851DCC2FE1004760AB /* GPUImageOverlayAndWhiterFilter.h */,
+				442A2F861DCC2FE1004760AB /* GPUImageOverlayAndWhiterFilter.m */,
 				442A2F891DCC2FE1004760AB /* GPUImageSubtractionFilter.h */,
 				442A2F8A1DCC2FE1004760AB /* GPUImageSubtractionFilter.m */,
 			);

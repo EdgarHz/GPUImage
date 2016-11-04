@@ -65,10 +65,11 @@ NSString *const kGPUImageBeautifyFragmentShaderString = SHADER_STRING
     _intensity = intensity;
     [self setFloat:intensity forUniform:smoothDegreeUniform program:filterProgram];
 }
-
 @end
 
 @implementation GPUImageBeautifyFilter
+@synthesize bilateralFilter;
+
 - (void)resetHsbFilter {
     [hsbFilter reset];
     [hsbFilter adjustBrightness:_whitening];
