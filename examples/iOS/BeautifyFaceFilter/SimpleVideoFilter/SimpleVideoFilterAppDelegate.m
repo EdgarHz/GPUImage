@@ -18,8 +18,8 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     
-    rootViewController = [[SimpleVideoFilterViewController alloc] initWithNibName:@"SimpleVideoFilterViewController" bundle:nil];
-//    rootViewController = [[PerfectFaceFilterViewController alloc] initWithNibName:@"PerfectFaceFilterViewController" bundle:nil];
+//    rootViewController = [[SimpleVideoFilterViewController alloc] initWithNibName:@"SimpleVideoFilterViewController" bundle:nil];
+    rootViewController = [[PerfectFaceFilterViewController alloc] initWithNibName:@"PerfectFaceFilterViewController" bundle:nil];
 
     rootViewController.view.frame = [[UIScreen mainScreen] bounds];
     [self.window addSubview:rootViewController.view];
