@@ -38,9 +38,43 @@
     [internalFilter addTarget:filterView];
     [videoCamera startCameraCapture];
     
+    CGSize size = CGSizeMake(1280, 720);
+    rawDataOutput = [[GPUImageRawDataOutput alloc] initWithImageSize:size resultsInBGRAFormat:YES];
+    if (!pixelBuffer){
+        int width = size.width, height = size.height;
+        NSDictionary* pixelBufferOptions = @{ (NSString*) kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+                                              (NSString*) kCVPixelBufferWidthKey : @(width),
+                                              (NSString*) kCVPixelBufferHeightKey : @(height),
+                                              (NSString*) kCVPixelBufferOpenGLESCompatibilityKey : @YES,
+                                              (NSString*) kCVPixelBufferIOSurfacePropertiesKey : @{}};
+        CVPixelBufferCreate(kCFAllocatorDefault, size.width, size.height, 'BGRA', (__bridge CFDictionaryRef)pixelBufferOptions, &pixelBuffer);
+    }
+    
+    [internalFilter addTarget:rawDataOutput];
+    [rawDataOutput setNewFrameAvailableBlock:^{
+         [rawDataOutput lockFramebufferForReading];
+        const CGSize size = [rawDataOutput maximumOutputSize];
+        const char* rawdata = (const char*)[rawDataOutput rawBytesForImage];
+        
+
+        if (pixelBuffer){
+            CVPixelBufferLockBaseAddress((CVPixelBufferRef)pixelBuffer, 0);
+            char* loc = (char*)CVPixelBufferGetBaseAddress((CVPixelBufferRef)pixelBuffer);
+            memcpy(loc, rawdata, size.width*size.height);
+            CVPixelBufferUnlockBaseAddress((CVPixelBufferRef)pixelBuffer, 0);
+            usleep(50);
+        }
+        [rawDataOutput unlockFramebufferAfterReading];
+    }];
+    
 
 }
-
+- (IBAction)rotateCamera:(UISwitch*)sender {
+    if ((sender.isOn && videoCamera.isFrontFacingCameraPresent)
+        || (!sender.isOn && videoCamera.isBackFacingCameraPresent)) {
+        [videoCamera rotateCamera];
+    }
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];
