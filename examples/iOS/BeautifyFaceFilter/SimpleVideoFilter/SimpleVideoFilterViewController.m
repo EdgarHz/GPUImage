@@ -67,6 +67,9 @@
         [rawDataOutput unlockFramebufferAfterReading];
     }];
     
+    [(UILabel*)[self.view viewWithTag:12] setText:[@"" stringByAppendingFormat:@"%f", filter.whitening]];
+    [(UILabel*)[self.view viewWithTag:13] setText:[@"" stringByAppendingFormat:@"%f", filter.saturation]];
+    [(UILabel*)[self.view viewWithTag:14] setText:[@"" stringByAppendingFormat:@"%f", filter.smoothIntensity]];
 
 }
 - (IBAction)rotateCamera:(UISwitch*)sender {
@@ -78,6 +81,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation

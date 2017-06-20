@@ -37,7 +37,9 @@
     [videoCamera addTarget:internalFilter];
     [internalFilter addTarget:filterView];
     [videoCamera startCameraCapture];
-
+    [(UILabel*)[self.view viewWithTag:11] setText:[@"" stringByAppendingFormat:@"%f",faceFilter.bilateralFilter.distanceNormalizationFactor]];
+    [(UILabel*)[self.view viewWithTag:12] setText:[@"" stringByAppendingFormat:@"%f", faceFilter.GaussianCopyFilter1.blurRadiusInPixels]];
+    [(UILabel*)[self.view viewWithTag:13] setText:[@"" stringByAppendingFormat:@"%f", faceFilter.GaussianFilter.blurRadiusInPixels]];
 }
 
 - (void)viewDidUnload
